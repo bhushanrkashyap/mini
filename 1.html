@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorithm Visualizer</title>
+
+  <style>
+    /* === Combined from styles.css === */
+    :root {
+      --primary: #2563eb;
+      --secondary: #f97316;
+      --secondary-light: #fbbf24;
+      --bg-light: #f9fafb;
+      --bg-dark: #111827;
+      --text-light: #f9fafb;
+      --text-dark: #111827;
+      --accent: #10b981;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+    }
+
+    .dark body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    header, nav {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .btn {
+      background-color: var(--secondary);
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary-light);
+    }
+
+    .hidden { display: none; }
+
+    .data-box {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      margin: 2px;
+      padding: 8px;
+      border-radius: 6px;
+      min-width: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .pointer-text {
+      position: absolute;
+      bottom: -20px;
+      font-size: 10px;
+      color: black;
+    }
+
+    .fade-in { animation: fadeIn 0.4s ease-in; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #array-visualizer, #stack-visualizer, #queue-visualizer, #tree-graph-visualizer {
+      margin-top: 20px;
+      text-align: center;
+      min-height: 100px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Algorithm Visualizer</h1>
+  </header>
+
+  <main>
+    <section id="landing-page">
+      <h2>Welcome to Algorithm Visualizer</h2>
+      <button id="start-learning-btn" class="btn">Start Learning</button>
+    </section>
+
+    <section id="main-content" class="hidden">
+      <nav>
+        <button id="home-link" class="btn">Home</button>
+        <button id="theme-toggle" class="btn">Toggle Theme</button>
+        <button id="logoutButton" class="btn">Logout</button>
+      </nav>
+
+      <div id="dashboard-view">
+        <h2>Choose Data Structure</h2>
+        <div id="modules">
+          <button class="btn visualizer-nav-btn" data-structure="arrays">Arrays</button>
+          <button class="btn visualizer-nav-btn" data-structure="stacks">Stacks</button>
+          <button class="btn visualizer-nav-btn" data-structure="queues">Queues</button>
+          <button class="btn visualizer-nav-btn" data-structure="trees">Trees</button>
+          <button class="btn visualizer-nav-btn" data-structure="graphs">Graphs</button>
+        </div>
+      </div>
+
+      <div id="visualizer-view" class="hidden">
+        <h2 id="visualizer-title">Visualizer</h2>
+        <div id="array-visualizer"></div>
+        <div id="stack-visualizer" class="hidden"></div>
+        <div id="queue-visualizer" class="hidden"></div>
+        <div id="tree-graph-visualizer" class="hidden"></div>
+
+        <div id="controls">
+          <select id="algorithm-select"></select>
+          <button id="start-btn" class="btn">Start</button>
+          <button id="reset-btn" class="btn">Reset</button>
+          <input id="manual-array-input" placeholder="Enter array: 5,3,8" />
+          <button id="load-manual-array-btn" class="btn">Load</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2025 Algorithm Visualizer</footer>
+
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <script>
+    /* === Combined from app.js === */
+    let isLoggedIn = false;
+    let currentStructure = 'arrays';
+    let arrayData = [];
+    let isAnimating = false;
+    let animationSpeed = 400;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('start-learning-btn').addEventListener('click', () => {
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+        showDashboard();
+      });
+
+      document.querySelectorAll('.visualizer-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => showVisualizer(btn.dataset.structure));
+      });
+
+      document.getElementById('start-btn').addEventListener('click', runAlgorithm);
+      document.getElementById('reset-btn').addEventListener('click', resetData);
+      document.getElementById('load-manual-array-btn').addEventListener('click', loadManualArray);
+      document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+      applyTheme();
+      resetData();
+    });
+
+    function showDashboard() {
+      hideAllViews();
+      document.getElementById('dashboard-view').classList.remove('hidden');
+    }
+
+    function showVisualizer(structure) {
+      hideAllViews();
+      document.getElementById('visualizer-view').classList.remove('hidden');
+      currentStructure = structure;
+      document.getElementById('visualizer-title').textContent = structure.toUpperCase() + " Visualizer";
+      resetData();
+    }
+
+    function hideAllViews() {
+      document.querySelectorAll('#dashboard-view, #visualizer-view').forEach(v => v.classList.add('hidden'));
+    }
+
+    function resetData() {
+      const size = 10;
+      arrayData = d3.shuffle(d3.range(1, size + 1));
+      renderArray(arrayData, "#array-visualizer");
+    }
+
+    function renderArray(data, container) {
+      const canvas = d3.select(container);
+      canvas.html("");
+      canvas.selectAll("div.data-box")
+        .data(data)
+        .enter()
+        .append("div")
+        .attr("class", "data-box")
+        .text(d => d);
+    }
+
+    async function runAlgorithm() {
+      if (isAnimating) return;
+      isAnimating = true;
+      await bubbleSort(arrayData, renderArray);
+      isAnimating = false;
+    }
+
+    async function bubbleSort(arr, render) {
+      let a = arr.slice();
+      for (let i = 0; i < a.length - 1; i++) {
+        for (let j = 0; j < a.length - i - 1; j++) {
+          if (a[j] > a[j + 1]) {
+            [a[j], a[j + 1]] = [a[j + 1], a[j]];
+            render(a, "#array-visualizer");
+            await sleep(animationSpeed);
+          }
+        }
+      }
+    }
+
+    function loadManualArray() {
+      const input = document.getElementById('manual-array-input').value.trim();
+      if (!input) return;
+      const parsed = input.split(',').map(s => parseInt(s)).filter(n => !isNaN(n));
+      arrayData = parsed;
+      renderArray(arrayData, "#array-visualizer");
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    function applyTheme() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.body.classList.add('dark');
+      else document.body.classList.remove('dark');
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>
