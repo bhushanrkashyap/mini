@@ -1,0 +1,98 @@
+{% extends 'algosphere/base.html' %}
+{% load static %}
+{% block title %}Arrays Visualizer{% endblock %}
+{% block content %}
+  <div class="mb-6">
+    <h1>Arrays & Sorting Visualizer</h1>
+    <p class="text-gray-600 text-lg">Watch sorting algorithms come to life with interactive animations</p>
+  </div>
+
+  <!-- Algorithm Info -->
+  <div class="algo-info mb-6">
+    <p class="font-semibold text-gray-700 mb-1">💡 How it works</p>
+    <p class="text-gray-600">Select an algorithm, adjust the speed, and click <strong>Run</strong> to see the visualization. The bars represent array elements, with colors indicating comparisons (orange) and sorted positions (green).</p>
+  </div>
+
+  <!-- Controls -->
+  <div class="card mb-6">
+    <div class="controls">
+      <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+        <label class="text-sm whitespace-nowrap">Algorithm</label>
+        <select id="alg-select" class="form-input flex-1">
+          <option>Bubble Sort</option>
+          <option>Selection Sort</option>
+          <option>Insertion Sort</option>
+          <option>Merge Sort</option>
+          <option>Quick Sort</option>
+          <option>Linear Search</option>
+          <option>Binary Search</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-2 flex-1 min-w-[180px]">
+        <label class="text-sm whitespace-nowrap">Speed</label>
+        <input id="speed" type="range" min="50" max="1000" value="300" class="flex-1">
+        <span id="speed-val" class="text-sm font-semibold text-gray-700 min-w-[45px]">300ms</span>
+      </div>
+
+      <button id="new-array" class="btn-primary whitespace-nowrap">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        New Array
+      </button>
+      <button id="run-algo" class="btn-primary whitespace-nowrap">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Run
+      </button>
+    </div>
+
+    <div class="mt-4 pt-4 border-t border-gray-200">
+      <label class="text-sm mb-2 block">Custom Array (comma-separated values)</label>
+      <div class="flex gap-2">
+        <input id="manual-array" class="form-input flex-1" placeholder="e.g., 5,2,8,1,9,12,3">
+        <button id="load-array" class="btn-secondary whitespace-nowrap">Load Custom</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualization -->
+  <div class="card">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg text-gray-800">Visualization</h3>
+      <div id="array-stats" class="flex gap-3">
+        <span class="stat-badge">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+          Size: <span id="array-size">12</span>
+        </span>
+      </div>
+    </div>
+    <svg id="array-svg" class="svg-wrap"></svg>
+  </div>
+
+  <script src="{% static 'js/arrays.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      window.AlgoSphereArrays?.init('#array-svg');
+      
+      // Speed display update
+      const speedInput = document.getElementById('speed');
+      const speedVal = document.getElementById('speed-val');
+      speedInput?.addEventListener('input', (e) => {
+        speedVal.textContent = e.target.value + 'ms';
+      });
+
+      // Update array size display
+      const updateArraySize = () => {
+        const svg = document.querySelector('#array-svg');
+        if (svg) {
+          const bars = svg.querySelectorAll('rect');
+          document.getElementById('array-size').textContent = bars.length;
+        }
+      };
+      
+      // Listen for array changes
+      const observer = new MutationObserver(updateArraySize);
+      const svg = document.querySelector('#array-svg');
+      if (svg) observer.observe(svg, { childList: true, subtree: true });
+    });
+  </script>
+{% endblock %}

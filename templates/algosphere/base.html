@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AlgoSphere - {% block title %}{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  {% block extra_head %}{% endblock %}
+  <style>
+    .nav-link{position:relative;transition:color 0.2s}
+    .nav-link::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:linear-gradient(90deg,#4f46e5,#6366f1);transition:width 0.3s}
+    .nav-link:hover::after,.nav-link.active::after{width:100%}
+    .mobile-menu{transform:translateX(100%);transition:transform 0.3s ease}
+    .mobile-menu.open{transform:translateX(0)}
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 min-h-screen text-gray-800">
+  <header class="shadow-md bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center shadow-lg">
+            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <a href="/algosphere/" class="text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-indigo-700 bg-clip-text text-transparent">AlgoSphere</a>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="/algosphere/arrays" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Arrays</a>
+          <a href="/algosphere/stacks" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Stacks</a>
+          <a href="/algosphere/queues" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Queues</a>
+          <a href="/algosphere/trees" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Trees</a>
+          <a href="/algosphere/graphs" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Graphs</a>
+          <a href="/algosphere/comparison" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Compare</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition">
+          <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-2xl md:hidden p-6 z-50">
+      <div class="flex justify-between items-center mb-8">
+        <span class="font-bold text-lg">Menu</span>
+        <button id="mobile-menu-close" class="p-2 hover:bg-gray-100 rounded-lg">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <nav class="flex flex-col gap-4">
+        <a href="/algosphere/arrays" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Arrays</a>
+        <a href="/algosphere/stacks" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Stacks</a>
+        <a href="/algosphere/queues" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Queues</a>
+        <a href="/algosphere/trees" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Trees</a>
+        <a href="/algosphere/graphs" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Graphs</a>
+        <a href="/algosphere/comparison" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Compare</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mt-16 py-8 border-t border-gray-200 bg-gray-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-sm text-gray-600 font-medium">&copy; 2025 AlgoSphere. Built for learning and visualization.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    
+    mobileMenuBtn?.addEventListener('click', () => mobileMenu?.classList.add('open'));
+    mobileMenuClose?.addEventListener('click', () => mobileMenu?.classList.remove('open'));
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu?.contains(e.target) && !mobileMenuBtn?.contains(e.target)) {
+        mobileMenu?.classList.remove('open');
+      }
+    });
+
+    // Highlight active navigation link
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  </script>
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

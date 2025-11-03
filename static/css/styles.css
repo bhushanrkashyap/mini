@@ -1,0 +1,295 @@
+/* AlgoSphere - Enhanced Visual Styles */
+:root{
+  --accent:#4f46e5;
+  --accent-2:#6366f1;
+  --accent-light:#818cf8;
+  --success:#10b981;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+  --muted:#6b7280;
+  --muted-light:#9ca3af;
+  --bg-card:rgba(255,255,255,0.95);
+  --shadow-sm:0 2px 8px rgba(15,23,42,0.04);
+  --shadow-md:0 6px 18px rgba(15,23,42,0.08);
+  --shadow-lg:0 12px 28px rgba(15,23,42,0.12);
+}
+
+*{box-sizing:border-box}
+body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;line-height:1.6}
+
+/* Card styles with animations */
+.card{
+  background:var(--bg-card);
+  border-radius:16px;
+  padding:1.5rem;
+  border:1px solid rgba(15,23,42,0.06);
+  box-shadow:var(--shadow-md);
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter:blur(10px);
+}
+.card:hover{
+  box-shadow:var(--shadow-lg);
+  transform:translateY(-2px);
+}
+
+/* Hero section */
+.hero{
+  background:linear-gradient(135deg,var(--accent) 0%, var(--accent-2) 100%);
+  color:white;
+  padding:3rem 2rem;
+  border-radius:16px;
+  box-shadow:var(--shadow-lg);
+  margin-bottom:2rem;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:url('data:image/svg+xml,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><circle cx="1" cy="1" r="1" fill="white" fill-opacity="0.1"/></svg>');
+  opacity:0.3;
+}
+
+/* Data visualization area */
+.data-area{
+  background:linear-gradient(180deg,#fafafa,#fff);
+  padding:1.5rem;
+  border-radius:12px;
+  border:1px solid rgba(15,23,42,0.03);
+  min-height:120px;
+}
+
+/* Controls */
+.controls{
+  display:flex;
+  gap:0.75rem;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+/* SVG container */
+.svg-wrap{
+  width:100%;
+  height:340px;
+  background:linear-gradient(180deg,rgba(249,250,251,0.5),rgba(255,255,255,0.3));
+  border-radius:8px;
+}
+
+/* D3 Visualizations */
+.bar{
+  fill:var(--accent);
+  transition:fill 0.2s ease;
+}
+.bar.sorted{fill:var(--success)}
+.bar.compare{fill:var(--warning)}
+.bar:hover{opacity:0.85}
+
+.node circle{
+  fill:var(--accent-2);
+  stroke:#fff;
+  stroke-width:2.5;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+.link{
+  stroke:var(--muted-light);
+  stroke-opacity:0.6;
+  stroke-width:2;
+}
+
+/* Data box */
+.data-box{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;
+  border-radius:10px;
+  padding:.75rem 1rem;
+  font-weight:700;
+  box-shadow:var(--shadow-sm);
+  min-width:50px;
+  min-height:50px;
+  font-size:1.125rem;
+}
+
+/* Text utilities */
+.muted{color:var(--muted)}
+.muted-light{color:var(--muted-light)}
+
+/* Buttons */
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:white;
+  padding:.625rem 1.25rem;
+  border-radius:10px;
+  border:none;
+  font-weight:600;
+  box-shadow:0 4px 12px rgba(79,70,229,0.25);
+  cursor:pointer;
+  transition:all 0.2s ease;
+  font-size:0.925rem;
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(79,70,229,0.35);
+}
+.btn-primary:active{
+  transform:translateY(0);
+}
+.btn-primary:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.btn-secondary{
+  background:#f3f4f6;
+  color:var(--muted);
+  padding:.625rem 1.25rem;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.08);
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  font-size:0.925rem;
+}
+.btn-secondary:hover{
+  background:#e5e7eb;
+  border-color:rgba(15,23,42,0.12);
+}
+
+/* Form inputs */
+.form-input{
+  border:1.5px solid rgba(15,23,42,0.1);
+  padding:.625rem .875rem;
+  border-radius:10px;
+  min-width:140px;
+  transition:all 0.2s ease;
+  font-size:0.925rem;
+  background:white;
+}
+.form-input:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,70,229,0.1);
+}
+.form-input::placeholder{
+  color:var(--muted-light);
+}
+
+.controls .form-input{min-width:160px}
+
+/* Labels */
+label{
+  font-weight:600;
+  color:var(--muted);
+  font-size:0.875rem;
+  letter-spacing:0.01em;
+}
+
+/* Stats badge */
+.stat-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  background:rgba(79,70,229,0.08);
+  color:var(--accent);
+  padding:.5rem .875rem;
+  border-radius:8px;
+  font-weight:600;
+  font-size:0.875rem;
+}
+
+/* Algorithm info card */
+.algo-info{
+  background:linear-gradient(135deg,rgba(79,70,229,0.05),rgba(99,102,241,0.05));
+  border-left:4px solid var(--accent);
+  padding:1rem;
+  border-radius:8px;
+  margin:1rem 0;
+  font-size:0.925rem;
+}
+
+/* Winner badge for comparison */
+.winner{
+  background:linear-gradient(135deg,var(--success),#059669);
+  color:white;
+  padding:.375rem .75rem;
+  border-radius:6px;
+  font-weight:700;
+  font-size:0.875rem;
+  display:inline-block;
+  animation:pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:0.8}
+}
+
+/* Page title enhancements */
+h1{
+  font-size:2rem;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:1.5rem;
+}
+
+/* Dashboard card grid enhancements */
+.dashboard-card{
+  position:relative;
+  overflow:hidden;
+}
+.dashboard-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:4px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  transform:scaleX(0);
+  transition:transform 0.3s ease;
+}
+.dashboard-card:hover::before{
+  transform:scaleX(1);
+}
+
+/* Icon styling */
+.icon{
+  width:2.5rem;
+  height:2.5rem;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:700;
+  font-size:1.25rem;
+  box-shadow:var(--shadow-sm);
+}
+
+/* Responsive tweaks */
+@media (max-width:768px){
+  .svg-wrap{height:240px}
+  .controls{gap:0.5rem}
+  .card{padding:1.25rem}
+  h1{font-size:1.75rem}
+  .hero{padding:2rem 1.5rem}
+}
+
+@media (max-width:640px){
+  .card{padding:1rem;border-radius:12px}
+  .controls{flex-direction:column;align-items:stretch}
+  .controls > *{width:100%}
+  .btn-primary,.btn-secondary{width:100%;justify-content:center}
+  h1{font-size:1.5rem}
+}

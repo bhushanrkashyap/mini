@@ -1,0 +1,225 @@
+{% extends 'algosphere/base.html' %}
+{% load static %}
+{% block title %}Algorithm Comparison{% endblock %}
+{% block content %}
+  <div class="mb-6">
+    <h1>Algorithm Comparison</h1>
+    <p class="text-gray-600 text-lg">Compare sorting algorithms side-by-side with real-time performance metrics</p>
+  </div>
+
+  <div class="algo-info mb-6">
+    <p class="font-semibold text-gray-700 mb-1">⚡ Performance Comparison</p>
+    <p class="text-gray-600">Watch two sorting algorithms race on the <strong>same numerical dataset</strong>. The algorithms sort actual number values (not bar heights), and execution times are measured in milliseconds.</p>
+  </div>
+
+  <!-- Algorithm Selection Cards -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="card">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">1</div>
+        <div>
+          <label class="text-sm mb-1 block">Algorithm 1</label>
+          <select id="comp-alg-1" class="form-input">
+            <option>Bubble Sort</option>
+            <option>Selection Sort</option>
+            <option>Merge Sort</option>
+            <option>Quick Sort</option>
+          </select>
+        </div>
+      </div>
+      <div id="comp-info-1" class="text-sm font-semibold text-gray-700 min-h-[24px]" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">2</div>
+        <div>
+          <label class="text-sm mb-1 block">Algorithm 2</label>
+          <select id="comp-alg-2" class="form-input">
+            <option>Selection Sort</option>
+            <option>Bubble Sort</option>
+            <option>Merge Sort</option>
+            <option>Quick Sort</option>
+          </select>
+        </div>
+      </div>
+      <div id="comp-info-2" class="text-sm font-semibold text-gray-700 min-h-[24px]" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="card mb-6">
+    <h3 class="font-bold text-lg text-gray-800 mb-4">Comparison Settings</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2">
+        <label class="text-sm mb-2 block">Input Array (comma-separated numbers, leave blank for random)</label>
+        <input id="comp-array" class="form-input w-full" placeholder="e.g., 8,3,15,1,9,22,5,11">
+      </div>
+      <div>
+        <label class="text-sm mb-2 block">Animation Speed</label>
+        <div class="flex items-center gap-2">
+          <input id="comp-speed" type="range" min="50" max="600" value="220" class="flex-1">
+          <span id="comp-speed-val" class="text-sm font-semibold text-gray-700 min-w-[50px]">220ms</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button id="comp-run" class="btn-primary flex-1">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+        Run Comparison
+      </button>
+      <button id="comp-reset" class="btn-secondary">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Visualization -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-bold text-gray-800">Algorithm 1 Result</h3>
+        <div id="winner-1"></div>
+      </div>
+      <svg id="comp-svg-1" class="svg-wrap" role="img" aria-label="Comparison result 1"></svg>
+      <div id="comp-result-1" class="mt-3 text-sm text-gray-600"></div>
+    </div>
+    
+    <div class="card">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-bold text-gray-800">Algorithm 2 Result</h3>
+        <div id="winner-2"></div>
+      </div>
+      <svg id="comp-svg-2" class="svg-wrap" role="img" aria-label="Comparison result 2"></svg>
+      <div id="comp-result-2" class="mt-3 text-sm text-gray-600"></div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/arrays.js' %}"></script>
+  <script>
+    // Pure sorting implementations (work on actual numerical values, not bar heights)
+    function generateBase(n=14){ return d3.shuffle(d3.range(5,60)).slice(0,n); }
+    function runPure(sortName, arr){ 
+      const a=arr.slice(); 
+      const t0=performance.now(); 
+      let res; 
+      if(sortName==='Bubble Sort') res=(function(a){ 
+        for(let i=0;i<a.length;i++){ 
+          for(let j=0;j<a.length-1-i;j++){ 
+            if(a[j]>a[j+1]) [a[j],a[j+1]]=[a[j+1],a[j]] 
+          } 
+        } 
+        return a 
+      })(a); 
+      else if(sortName==='Selection Sort') res=(function(a){ 
+        for(let i=0;i<a.length;i++){ 
+          let m=i; 
+          for(let j=i+1;j<a.length;j++) if(a[j]<a[m]) m=j; 
+          [a[i],a[m]]=[a[m],a[i]] 
+        } 
+        return a 
+      })(a); 
+      else if(sortName==='Merge Sort') res=(function ms(a){ 
+        if(a.length<=1) return a; 
+        const m=Math.floor(a.length/2); 
+        const L=ms(a.slice(0,m)); 
+        const R=ms(a.slice(m)); 
+        let i=0,j=0,res=[]; 
+        while(i<L.length&&j<R.length){ 
+          if(L[i]<=R[j]) res.push(L[i++]); 
+          else res.push(R[j++]); 
+        } 
+        while(i<L.length) res.push(L[i++]); 
+        while(j<R.length) res.push(R[j++]); 
+        return res; 
+      })(a); 
+      else if(sortName==='Quick Sort') res=(function qs(a){ 
+        if(a.length<=1) return a; 
+        const p=a[Math.floor(a.length/2)]; 
+        const L=a.filter(x=>x<p); 
+        const M=a.filter(x=>x===p); 
+        const R=a.filter(x=>x>p); 
+        return qs(L).concat(M,qs(R)); 
+      })(a); 
+      const t1=performance.now(); 
+      return {res,time:(t1-t0).toFixed(2)}; 
+    }
+
+    // Speed display
+    const speedInput = document.getElementById('comp-speed');
+    const speedVal = document.getElementById('comp-speed-val');
+    speedInput?.addEventListener('input', (e) => {
+      speedVal.textContent = e.target.value + 'ms';
+    });
+
+    document.getElementById('comp-run').addEventListener('click', async ()=>{
+      const input = document.getElementById('comp-array').value.trim(); 
+      const base = input ? input.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)) : generateBase(14);
+      
+      if(base.length === 0){
+        alert('Please enter valid numbers or leave blank for random array');
+        return;
+      }
+
+      const alg1 = document.getElementById('comp-alg-1').value; 
+      const alg2 = document.getElementById('comp-alg-2').value;
+      const speed = parseInt(document.getElementById('comp-speed').value,10) || 220;
+      const runBtn = document.getElementById('comp-run'); 
+      const resetBtn = document.getElementById('comp-reset');
+      
+      // Clear previous results
+      document.getElementById('comp-info-1').textContent = 'Running...';
+      document.getElementById('comp-info-2').textContent = 'Running...';
+      document.getElementById('winner-1').innerHTML = '';
+      document.getElementById('winner-2').innerHTML = '';
+      document.getElementById('comp-result-1').textContent = '';
+      document.getElementById('comp-result-2').textContent = '';
+
+      runBtn.disabled = true; 
+      resetBtn.disabled = true; 
+      runBtn.textContent = 'Running...';
+
+      const p1 = (window.AlgoSphereArrays && typeof window.AlgoSphereArrays.play === 'function') ?
+        window.AlgoSphereArrays.play('#comp-svg-1', base.slice(), alg1, speed) : Promise.resolve(runPure(alg1, base));
+      const p2 = (window.AlgoSphereArrays && typeof window.AlgoSphereArrays.play === 'function') ?
+        window.AlgoSphereArrays.play('#comp-svg-2', base.slice(), alg2, speed) : Promise.resolve(runPure(alg2, base));
+      
+      const [r1, r2] = await Promise.all([p1, p2]);
+      
+      const t1 = parseFloat(r1.time ?? (r1.time ? r1.time : '0'));
+      const t2 = parseFloat(r2.time ?? (r2.time ? r2.time : '0'));
+      
+      document.getElementById('comp-info-1').textContent = alg1 + ' completed in ' + t1 + ' ms';
+      document.getElementById('comp-info-2').textContent = alg2 + ' completed in ' + t2 + ' ms';
+      document.getElementById('comp-result-1').textContent = 'Sorted ' + base.length + ' elements';
+      document.getElementById('comp-result-2').textContent = 'Sorted ' + base.length + ' elements';
+
+      // Show winner
+      if(t1 < t2){
+        document.getElementById('winner-1').innerHTML = '<span class="winner">🏆 Faster</span>';
+      } else if(t2 < t1){
+        document.getElementById('winner-2').innerHTML = '<span class="winner">🏆 Faster</span>';
+      } else {
+        document.getElementById('winner-1').innerHTML = '<span class="stat-badge" style="font-size:0.75rem">Tie</span>';
+        document.getElementById('winner-2').innerHTML = '<span class="stat-badge" style="font-size:0.75rem">Tie</span>';
+      }
+
+      runBtn.disabled = false; 
+      resetBtn.disabled = false; 
+      runBtn.innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>Run Comparison';
+    });
+
+    document.getElementById('comp-reset').addEventListener('click', ()=>{ 
+      document.getElementById('comp-array').value=''; 
+      document.getElementById('comp-info-1').textContent=''; 
+      document.getElementById('comp-info-2').textContent=''; 
+      document.getElementById('comp-result-1').textContent='';
+      document.getElementById('comp-result-2').textContent='';
+      document.getElementById('winner-1').innerHTML = '';
+      document.getElementById('winner-2').innerHTML = '';
+      d3.select('#comp-svg-1').selectAll('*').remove(); 
+      d3.select('#comp-svg-2').selectAll('*').remove(); 
+    });
+  </script>
+{% endblock %}

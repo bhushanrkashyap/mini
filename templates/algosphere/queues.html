@@ -1,0 +1,61 @@
+{% extends 'algosphere/base.html' %}
+{% load static %}
+{% block title %}Queue Visualizer{% endblock %}
+{% block content %}
+  <div class="mb-6">
+    <h1>Queue Visualizer</h1>
+    <p class="text-gray-600 text-lg">Explore First-In-First-Out (FIFO) data structure</p>
+  </div>
+
+  <div class="algo-info mb-6">
+    <p class="font-semibold text-gray-700 mb-1">💡 Queue Operations</p>
+    <p class="text-gray-600"><strong>Enqueue:</strong> Add an element to the rear • <strong>Dequeue:</strong> Remove an element from the front • <strong>Clear:</strong> Empty the queue</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Controls -->
+    <div class="card lg:col-span-1">
+      <h3 class="font-bold text-lg text-gray-800 mb-4">Controls</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="text-sm mb-2 block">Value to Enqueue</label>
+          <input id="queue-value" class="form-input w-full" placeholder="Enter a number" type="number">
+        </div>
+        <button id="enqueue-btn" class="btn-primary w-full">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Enqueue
+        </button>
+        <button id="dequeue-btn" class="btn-secondary w-full">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+          Dequeue
+        </button>
+        <button id="clear-queue" class="btn-secondary w-full">Clear Queue</button>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-gray-200">
+        <div class="stat-badge w-full justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          Queue Size: <span id="queue-size">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visualization -->
+    <div class="card lg:col-span-2">
+      <h3 class="font-bold text-lg text-gray-800 mb-4">Queue Visualization</h3>
+      <div class="text-sm text-gray-600 mb-3 flex items-center gap-2">
+        <span class="font-semibold">Front →</span>
+        <div class="flex-1 border-t border-dashed border-gray-300"></div>
+        <span class="font-semibold">← Rear</span>
+      </div>
+      <svg id="queue-svg" class="svg-wrap" style="height:200px"></svg>
+    </div>
+  </div>
+
+  <script src="{% static 'js/queues.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      window.AlgoSphereQueues?.init('#queue-svg');
+    });
+  </script>
+{% endblock %}
