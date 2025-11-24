@@ -1,4 +1,3 @@
-// Simple D3 stack visualizer using rectangles stacked vertically
 (function(){
   function render(svg, data){
     svg.innerHTML='';
@@ -23,7 +22,6 @@
         .text(v);
     });
     
-    // Update size counter
     const sizeEl = document.getElementById('stack-size');
     if(sizeEl) sizeEl.textContent = data.length;
   }
@@ -34,7 +32,6 @@
       let stack = [5,3,8]; 
       render(svg,stack);
       
-      // Set initial size
       setTimeout(() => {
         const sizeEl = document.getElementById('stack-size');
         if(sizeEl) sizeEl.textContent = stack.length;

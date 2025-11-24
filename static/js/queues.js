@@ -1,4 +1,3 @@
-// Simple D3 queue visualizer using rectangles horizontally
 (function(){
   function render(svg, data){
     svg.innerHTML='';
@@ -23,7 +22,6 @@
         .text(v);
     });
     
-    // Update size counter
     const sizeEl = document.getElementById('queue-size');
     if(sizeEl) sizeEl.textContent = data.length;
   }
@@ -34,7 +32,6 @@
       let queue = [4,2,7]; 
       render(svg,queue);
       
-      // Set initial size
       setTimeout(() => {
         const sizeEl = document.getElementById('queue-size');
         if(sizeEl) sizeEl.textContent = queue.length;

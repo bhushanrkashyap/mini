@@ -1,0 +1,108 @@
+{% extends 'algosphere/base.html' %}
+{% load static %}
+{% block title %}Linked List Visualizer{% endblock %}
+{% block content %}
+  <div class="mb-6">
+    <h1>Linked List Visualizer</h1>
+    <p class="text-gray-600 text-lg">Explore dynamic node-based data structure</p>
+  </div>
+
+  <div class="algo-info mb-6">
+    <p class="font-semibold text-gray-700 mb-1">💡 Linked List Operations</p>
+    <p class="text-gray-600"><strong>Insert:</strong> Add nodes at head, tail, or position • <strong>Delete:</strong> Remove from head or tail • <strong>Search:</strong> Find nodes by value • <strong>Reverse:</strong> Flip the list direction</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <!-- Controls -->
+    <div class="card lg:col-span-1">
+      <h3 class="font-bold text-lg text-gray-800 mb-4">Controls</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="text-sm mb-2 block">Insert at Head</label>
+          <div class="flex gap-2">
+            <input id="headValue" class="form-input flex-1" placeholder="Value" type="number">
+            <button onclick="insertAtHead()" class="btn-primary">Add</button>
+          </div>
+        </div>
+        
+        <div>
+          <label class="text-sm mb-2 block">Insert at Tail</label>
+          <div class="flex gap-2">
+            <input id="tailValue" class="form-input flex-1" placeholder="Value" type="number">
+            <button onclick="insertAtTail()" class="btn-primary">Add</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm mb-2 block">Insert at Position</label>
+          <div class="flex gap-2">
+            <input id="posValue" class="form-input flex-1" placeholder="Value" type="number">
+            <input id="position" class="form-input" style="width:70px" placeholder="Pos" type="number">
+            <button onclick="insertAtPosition()" class="btn-primary">Add</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm mb-2 block">Search Value</label>
+          <div class="flex gap-2">
+            <input id="searchValue" class="form-input flex-1" placeholder="Value" type="number">
+            <button onclick="searchNode()" class="btn-primary">Find</button>
+          </div>
+          <div id="searchMessage" class="mt-2 text-sm font-medium" style="min-height: 20px;"></div>
+        </div>
+
+        <div class="pt-3 border-t border-gray-200">
+          <button onclick="deleteFromHead()" class="btn-secondary w-full mb-2">Delete from Head</button>
+          <button onclick="deleteFromTail()" class="btn-secondary w-full mb-2">Delete from Tail</button>
+          <button onclick="reverseList()" class="btn-secondary w-full mb-2">🔄 Reverse List</button>
+          <button onclick="clearList()" class="btn-secondary w-full mb-2">Clear List</button>
+          <button onclick="generateRandom()" class="btn-primary w-full">🎲 Random List</button>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-gray-200">
+        <div class="stat-badge w-full justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          List Length: <span id="listLength">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visualization -->
+    <div class="card lg:col-span-2">
+      <h3 class="font-bold text-lg text-gray-800 mb-4">Linked List Visualization</h3>
+      <div class="text-sm text-gray-600 mb-3 flex items-center gap-2">
+        <span class="font-semibold">HEAD →</span>
+        <div class="flex-1 border-t border-dashed border-gray-300"></div>
+        <span class="font-semibold">→ NULL</span>
+      </div>
+      <svg id="linkedListSvg" class="svg-wrap" style="height:250px"></svg>
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card">
+      <h3 class="font-bold text-lg text-gray-800 mb-3">⏱️ Time Complexity</h3>
+      <div class="space-y-2 text-sm text-gray-700">
+        <div class="flex justify-between"><span>Insert at Head:</span> <code class="stat-badge text-xs">O(1)</code></div>
+        <div class="flex justify-between"><span>Insert at Tail:</span> <code class="stat-badge text-xs">O(n)</code></div>
+        <div class="flex justify-between"><span>Delete from Head:</span> <code class="stat-badge text-xs">O(1)</code></div>
+        <div class="flex justify-between"><span>Search:</span> <code class="stat-badge text-xs">O(n)</code></div>
+        <div class="flex justify-between"><span>Reverse:</span> <code class="stat-badge text-xs">O(n)</code></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="font-bold text-lg text-gray-800 mb-3">✨ Key Features</h3>
+      <ul class="space-y-2 text-sm text-gray-700">
+        <li>✓ <strong>Dynamic Size:</strong> Grows and shrinks at runtime</li>
+        <li>✓ <strong>Efficient Insertion:</strong> O(1) at head position</li>
+        <li>✓ <strong>No Memory Waste:</strong> Uses exactly what it needs</li>
+        <li>✓ <strong>Sequential Access:</strong> Perfect for traversal</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="{% static 'js/linkedlist.js' %}"></script>
+{% endblock %}

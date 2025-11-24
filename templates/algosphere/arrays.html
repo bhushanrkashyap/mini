@@ -45,12 +45,20 @@
       </button>
     </div>
 
-    <div class="mt-4 pt-4 border-t border-gray-200">
+    <div id="custom-array-container" class="mt-4 pt-4 border-t border-gray-200">
       <label class="text-sm mb-2 block">Custom Array (comma-separated values)</label>
       <div class="flex gap-2">
         <input id="manual-array" class="form-input flex-1" placeholder="e.g., 5,2,8,1,9,12,3">
         <button id="load-array" class="btn-secondary whitespace-nowrap">Load Custom</button>
       </div>
+    </div>
+
+    <div id="search-input-container" class="mt-4 pt-4 border-t border-gray-200" style="display: none;">
+      <label class="text-sm mb-2 block">Search Value (for Linear/Binary Search)</label>
+      <div class="flex gap-2">
+        <input id="search-value" class="form-input flex-1" placeholder="Enter value to search" type="number">
+      </div>
+      <div id="search-message" class="mt-2 text-sm font-medium" style="min-height: 20px;"></div>
     </div>
   </div>
 
@@ -68,7 +76,7 @@
     <svg id="array-svg" class="svg-wrap"></svg>
   </div>
 
-  <script src="{% static 'js/arrays.js' %}"></script>
+  <script src="{% static 'js/arrays.js' %}?v=2"></script>
   <script>
     document.addEventListener('DOMContentLoaded', ()=>{
       window.AlgoSphereArrays?.init('#array-svg');
@@ -78,6 +86,22 @@
       const speedVal = document.getElementById('speed-val');
       speedInput?.addEventListener('input', (e) => {
         speedVal.textContent = e.target.value + 'ms';
+      });
+
+      // Show/hide search input based on selected algorithm
+      const algSelect = document.getElementById('alg-select');
+      const searchContainer = document.getElementById('search-input-container');
+      const customArrayContainer = document.getElementById('custom-array-container');
+      
+      algSelect?.addEventListener('change', (e) => {
+        const selectedAlg = e.target.value;
+        if (selectedAlg === 'Linear Search' || selectedAlg === 'Binary Search') {
+          searchContainer.style.display = 'block';
+          customArrayContainer.style.display = 'none';
+        } else {
+          searchContainer.style.display = 'none';
+          customArrayContainer.style.display = 'block';
+        }
       });
 
       // Update array size display

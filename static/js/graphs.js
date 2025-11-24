@@ -1,4 +1,3 @@
-// Interactive Graph Visualizer with BFS and DFS
 (function(){
   class Graph {
     constructor() {
@@ -17,7 +16,6 @@
       if (!this.adjacencyList.has(node1)) this.addNode(node1);
       if (!this.adjacencyList.has(node2)) this.addNode(node2);
       
-      // Add bidirectional edge
       if (!this.adjacencyList.get(node1).includes(node2)) {
         this.adjacencyList.get(node1).push(node2);
       }
@@ -125,11 +123,9 @@
       return;
     }
 
-    // Prepare D3 data
     d3Nodes = graph.nodes.map(id => ({ id }));
     d3Links = graph.getEdges();
 
-    // Create force simulation
     if (simulation) simulation.stop();
     
     simulation = d3.forceSimulation(d3Nodes)
@@ -138,7 +134,6 @@
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(40));
 
-    // Draw links
     const link = svg.append('g')
       .attr('class', 'links')
       .selectAll('line')
@@ -148,7 +143,6 @@
       .attr('stroke', '#9ca3af')
       .attr('stroke-width', 3);
 
-    // Draw nodes
     const node = svg.append('g')
       .attr('class', 'nodes')
       .selectAll('g')
@@ -208,17 +202,14 @@
   async function animateTraversal(svg, order, speed) {
     if (order.length === 0) return;
 
-    // Reset all nodes
     svg.selectAll('.node circle')
       .transition()
       .duration(200)
       .attr('fill', '#4f46e5');
 
-    // Animate traversal
     for (let i = 0; i < order.length; i++) {
       const nodeId = order[i];
       
-      // Highlight current node
       svg.selectAll('.node')
         .filter(d => d.id === nodeId)
         .select('circle')
@@ -240,14 +231,12 @@
 
       render(currentSvg);
 
-      // Speed slider
       const speedSlider = document.getElementById('speed-slider');
       const speedDisplay = document.getElementById('speed-display');
       speedSlider?.addEventListener('input', (e) => {
         speedDisplay.textContent = e.target.value + 'ms';
       });
 
-      // Add nodes
       document.getElementById('add-nodes-btn')?.addEventListener('click', () => {
         const input = document.getElementById('node-input');
         const values = input.value.split(',').map(v => v.trim()).filter(v => v);
@@ -268,7 +257,6 @@
         render(currentSvg);
       });
 
-      // Add edge
       document.getElementById('add-edge-btn')?.addEventListener('click', () => {
         const from = parseInt(document.getElementById('edge-from').value);
         const to = parseInt(document.getElementById('edge-to').value);
@@ -289,7 +277,6 @@
         render(currentSvg);
       });
 
-      // Sample graph
       document.getElementById('sample-graph')?.addEventListener('click', () => {
         graph.clear();
         [1, 2, 3, 4, 5, 6].forEach(n => graph.addNode(n));
@@ -302,14 +289,12 @@
         render(currentSvg);
       });
 
-      // Clear graph
       document.getElementById('clear-graph')?.addEventListener('click', () => {
         graph.clear();
         render(currentSvg);
         document.getElementById('traversal-order').innerHTML = 'Ready to traverse';
       });
 
-      // BFS
       document.getElementById('bfs-btn')?.addEventListener('click', async () => {
         const startNode = parseInt(document.getElementById('start-node').value);
         if (isNaN(startNode) || !graph.adjacencyList.has(startNode)) {
@@ -325,7 +310,6 @@
         await animateTraversal(currentSvg, order, speed);
       });
 
-      // DFS
       document.getElementById('dfs-btn')?.addEventListener('click', async () => {
         const startNode = parseInt(document.getElementById('start-node').value);
         if (isNaN(startNode) || !graph.adjacencyList.has(startNode)) {
@@ -341,7 +325,6 @@
         await animateTraversal(currentSvg, order, speed);
       });
 
-      // Enter key handlers
       document.getElementById('node-input')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('add-nodes-btn').click();
       });

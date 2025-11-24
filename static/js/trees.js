@@ -1,4 +1,3 @@
-// Interactive Tree Visualizer with BST and Normal Binary Tree
 (function(){
   class TreeNode {
     constructor(value) {
@@ -50,7 +49,6 @@
         return;
       }
       
-      // Level-order insertion for normal binary tree
       const queue = [this.root];
       while (queue.length > 0) {
         const current = queue.shift();
@@ -148,7 +146,6 @@
 
     const g = svg.append('g').attr('transform', 'translate(50, 50)');
 
-    // Draw links
     g.selectAll('path.link')
       .data(root.links())
       .enter()
@@ -161,7 +158,6 @@
       .style('stroke', '#c7cfd6')
       .style('stroke-width', 2);
 
-    // Draw nodes
     const node = g.selectAll('g.node')
       .data(root.descendants())
       .enter()
@@ -200,19 +196,16 @@
       nodeMap[d.data.name] = d;
     });
 
-    // Reset all nodes to default color
     svg.selectAll('circle')
       .transition()
       .duration(200)
       .style('fill', '#6366f1');
 
-    // Animate traversal
     for (let i = 0; i < traversalOrder.length; i++) {
       const value = String(traversalOrder[i]);
       const node = nodeMap[value];
       
       if (node) {
-        // Highlight current node
         svg.selectAll('g.node')
           .filter(d => d.data.name === value)
           .select('circle')
@@ -238,15 +231,12 @@
       currentSvg = d3.select(svgSel);
       if (currentSvg.empty()) return;
 
-      // Initial empty render
       render(currentSvg);
 
-      // Tree type selection
       document.getElementById('tree-type')?.addEventListener('change', (e) => {
         treeType = e.target.value;
       });
 
-      // Insert button
       document.getElementById('insert-btn')?.addEventListener('click', () => {
         const input = document.getElementById('tree-value');
         const value = parseInt(input.value);
@@ -265,7 +255,6 @@
         render(currentSvg);
       });
 
-      // Random tree
       document.getElementById('random-tree')?.addEventListener('click', () => {
         tree.clear();
         const values = [];
@@ -284,14 +273,12 @@
         render(currentSvg);
       });
 
-      // Clear tree
       document.getElementById('clear-tree')?.addEventListener('click', () => {
         tree.clear();
         render(currentSvg);
         document.getElementById('traversal-result').innerHTML = 'Ready to traverse';
       });
 
-      // Traversal buttons
       document.getElementById('inorder-btn')?.addEventListener('click', async () => {
         const result = tree.inorder();
         document.getElementById('traversal-result').innerHTML = 
@@ -313,7 +300,6 @@
         await animateTraversal(currentSvg, result);
       });
 
-      // Allow Enter key to insert
       document.getElementById('tree-value')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           document.getElementById('insert-btn').click();

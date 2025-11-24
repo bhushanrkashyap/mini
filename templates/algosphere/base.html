@@ -4,6 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Interactive algorithm and data structure visualizer with real-time animations">
+  <meta name="keywords" content="algorithms, data structures, visualization, sorting, D3.js, educational">
+  <meta name="author" content="AlgoSphere">
   <title>AlgoSphere - {% block title %}{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -34,16 +37,11 @@
           <a href="/algosphere/arrays" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Arrays</a>
           <a href="/algosphere/stacks" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Stacks</a>
           <a href="/algosphere/queues" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Queues</a>
+          <a href="/algosphere/linkedlist" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Linked List</a>
           <a href="/algosphere/trees" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Trees</a>
           <a href="/algosphere/graphs" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Graphs</a>
           <a href="/algosphere/comparison" class="nav-link text-sm font-semibold text-gray-700 hover:text-indigo-600">Compare</a>
           
-          {% if user.is_authenticated %}
-            <span class="text-sm font-medium text-gray-600">Hi, {{ user.username }}</span>
-            <a href="{% url 'algosphere:logout' %}" class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">Logout</a>
-          {% else %}
-            <a href="{% url 'algosphere:auth' %}" class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">Login</a>
-          {% endif %}
         </nav>
 
         <!-- Mobile Menu Button -->
@@ -65,18 +63,11 @@
         <a href="/algosphere/arrays" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Arrays</a>
         <a href="/algosphere/stacks" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Stacks</a>
         <a href="/algosphere/queues" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Queues</a>
+        <a href="/algosphere/linkedlist" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Linked List</a>
         <a href="/algosphere/trees" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Trees</a>
         <a href="/algosphere/graphs" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Graphs</a>
         <a href="/algosphere/comparison" class="text-base font-semibold text-gray-700 hover:text-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-50 transition">Compare</a>
         
-        <hr class="border-gray-200 my-2">
-        
-        {% if user.is_authenticated %}
-          <span class="text-sm font-medium text-gray-600 py-2 px-3">Hi, {{ user.username }}</span>
-          <a href="{% url 'algosphere:logout' %}" class="text-base font-semibold text-white bg-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-700 transition text-center">Logout</a>
-        {% else %}
-          <a href="{% url 'algosphere:auth' %}" class="text-base font-semibold text-white bg-indigo-600 py-2 px-3 rounded-lg hover:bg-indigo-700 transition text-center">Login / Sign Up</a>
-        {% endif %}
       </nav>
     </div>
   </header>

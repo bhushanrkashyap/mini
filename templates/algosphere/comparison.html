@@ -22,6 +22,7 @@
           <select id="comp-alg-1" class="form-input">
             <option>Bubble Sort</option>
             <option>Selection Sort</option>
+            <option>Insertion Sort</option>
             <option>Merge Sort</option>
             <option>Quick Sort</option>
           </select>
@@ -38,6 +39,7 @@
           <select id="comp-alg-2" class="form-input">
             <option>Selection Sort</option>
             <option>Bubble Sort</option>
+            <option>Insertion Sort</option>
             <option>Merge Sort</option>
             <option>Quick Sort</option>
           </select>
@@ -61,6 +63,9 @@
           <input id="comp-speed" type="range" min="50" max="600" value="220" class="flex-1">
           <span id="comp-speed-val" class="text-sm font-semibold text-gray-700 min-w-[50px]">220ms</span>
         </div>
+        <p class="text-xs text-gray-500 mt-1">
+          ⓘ Animation speed controls visualization only. Time shown is actual execution time.
+        </p>
       </div>
     </div>
     <div class="flex gap-3 mt-4">
@@ -98,52 +103,89 @@
 
   <script src="{% static 'js/arrays.js' %}"></script>
   <script>
-    // Pure sorting implementations (work on actual numerical values, not bar heights)
+    // Pure sorting implementations with operation counting
     function generateBase(n=14){ return d3.shuffle(d3.range(5,60)).slice(0,n); }
+    
     function runPure(sortName, arr){ 
       const a=arr.slice(); 
+      let operations = 0; // Count comparisons and swaps
       const t0=performance.now(); 
       let res; 
-      if(sortName==='Bubble Sort') res=(function(a){ 
+      
+      if(sortName==='Bubble Sort') {
         for(let i=0;i<a.length;i++){ 
           for(let j=0;j<a.length-1-i;j++){ 
-            if(a[j]>a[j+1]) [a[j],a[j+1]]=[a[j+1],a[j]] 
+            operations++; // comparison
+            if(a[j]>a[j+1]) {
+              [a[j],a[j+1]]=[a[j+1],a[j]];
+              operations++; // swap
+            }
           } 
-        } 
-        return a 
-      })(a); 
-      else if(sortName==='Selection Sort') res=(function(a){ 
+        }
+        res = a;
+      } else if(sortName==='Selection Sort') {
         for(let i=0;i<a.length;i++){ 
           let m=i; 
-          for(let j=i+1;j<a.length;j++) if(a[j]<a[m]) m=j; 
-          [a[i],a[m]]=[a[m],a[i]] 
-        } 
-        return a 
-      })(a); 
-      else if(sortName==='Merge Sort') res=(function ms(a){ 
-        if(a.length<=1) return a; 
-        const m=Math.floor(a.length/2); 
-        const L=ms(a.slice(0,m)); 
-        const R=ms(a.slice(m)); 
-        let i=0,j=0,res=[]; 
-        while(i<L.length&&j<R.length){ 
-          if(L[i]<=R[j]) res.push(L[i++]); 
-          else res.push(R[j++]); 
-        } 
-        while(i<L.length) res.push(L[i++]); 
-        while(j<R.length) res.push(R[j++]); 
-        return res; 
-      })(a); 
-      else if(sortName==='Quick Sort') res=(function qs(a){ 
-        if(a.length<=1) return a; 
-        const p=a[Math.floor(a.length/2)]; 
-        const L=a.filter(x=>x<p); 
-        const M=a.filter(x=>x===p); 
-        const R=a.filter(x=>x>p); 
-        return qs(L).concat(M,qs(R)); 
-      })(a); 
+          for(let j=i+1;j<a.length;j++) {
+            operations++; // comparison
+            if(a[j]<a[m]) m=j; 
+          }
+          if(m !== i) {
+            [a[i],a[m]]=[a[m],a[i]];
+            operations++; // swap
+          }
+        }
+        res = a;
+      } else if(sortName==='Insertion Sort') {
+        for(let i=1;i<a.length;i++){
+          let key=a[i];
+          let j=i-1;
+          while(j>=0){
+            operations++; // comparison
+            if(a[j]>key){
+              a[j+1]=a[j];
+              operations++; // shift
+              j--;
+            } else break;
+          }
+          a[j+1]=key;
+        }
+        res = a;
+      } else if(sortName==='Merge Sort') {
+        function ms(arr){ 
+          if(arr.length<=1) return arr; 
+          const mid=Math.floor(arr.length/2); 
+          const L=ms(arr.slice(0,mid)); 
+          const R=ms(arr.slice(mid)); 
+          let i=0,j=0,result=[]; 
+          while(i<L.length&&j<R.length){ 
+            operations++; // comparison
+            if(L[i]<=R[j]) result.push(L[i++]); 
+            else result.push(R[j++]); 
+          } 
+          while(i<L.length) result.push(L[i++]); 
+          while(j<R.length) result.push(R[j++]); 
+          return result; 
+        }
+        res = ms(a);
+      } else if(sortName==='Quick Sort') {
+        function qs(arr){ 
+          if(arr.length<=1) return arr; 
+          const p=arr[Math.floor(arr.length/2)]; 
+          const L=[], M=[], R=[];
+          for(let x of arr) {
+            operations++; // comparison
+            if(x<p) L.push(x);
+            else if(x===p) M.push(x);
+            else R.push(x);
+          }
+          return qs(L).concat(M,qs(R)); 
+        }
+        res = qs(a);
+      }
+      
       const t1=performance.now(); 
-      return {res,time:(t1-t0).toFixed(2)}; 
+      return {res, time:(t1-t0).toFixed(3), operations}; 
     }
 
     // Speed display
@@ -180,22 +222,27 @@
       resetBtn.disabled = true; 
       runBtn.textContent = 'Running...';
 
-      const p1 = (window.AlgoSphereArrays && typeof window.AlgoSphereArrays.play === 'function') ?
-        window.AlgoSphereArrays.play('#comp-svg-1', base.slice(), alg1, speed) : Promise.resolve(runPure(alg1, base));
-      const p2 = (window.AlgoSphereArrays && typeof window.AlgoSphereArrays.play === 'function') ?
-        window.AlgoSphereArrays.play('#comp-svg-2', base.slice(), alg2, speed) : Promise.resolve(runPure(alg2, base));
+      // Run sequentially so animations don't overlap
+      // Run algorithm 1
+      const pure1 = runPure(alg1, base);
+      const r1 = (window.AlgoSphereArrays && typeof window.AlgoSphereArrays.play === 'function') ?
+        await window.AlgoSphereArrays.play('#comp-svg-1', base.slice(), alg1, speed) : {time: pure1.time};
       
-      const [r1, r2] = await Promise.all([p1, p2]);
+      // Run algorithm 2
+      const pure2 = runPure(alg2, base);
+      const r2 = (window.AlgoSphereArrays && typeof window.AlgoSphereArrays.play === 'function') ?
+        await window.AlgoSphereArrays.play('#comp-svg-2', base.slice(), alg2, speed) : {time: pure2.time};
       
-      const t1 = parseFloat(r1.time ?? (r1.time ? r1.time : '0'));
-      const t2 = parseFloat(r2.time ?? (r2.time ? r2.time : '0'));
+      // Use pure execution time (actual algorithm performance)
+      const t1 = parseFloat(pure1.time);
+      const t2 = parseFloat(pure2.time);
       
-      document.getElementById('comp-info-1').textContent = alg1 + ' completed in ' + t1 + ' ms';
-      document.getElementById('comp-info-2').textContent = alg2 + ' completed in ' + t2 + ' ms';
+      document.getElementById('comp-info-1').textContent = alg1 + ' - Time: ' + t1 + ' ms | Operations: ' + pure1.operations;
+      document.getElementById('comp-info-2').textContent = alg2 + ' - Time: ' + t2 + ' ms | Operations: ' + pure2.operations;
       document.getElementById('comp-result-1').textContent = 'Sorted ' + base.length + ' elements';
       document.getElementById('comp-result-2').textContent = 'Sorted ' + base.length + ' elements';
 
-      // Show winner
+      // Show winner based on actual execution time
       if(t1 < t2){
         document.getElementById('winner-1').innerHTML = '<span class="winner">🏆 Faster</span>';
       } else if(t2 < t1){

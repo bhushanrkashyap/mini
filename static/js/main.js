@@ -1,7 +1,4 @@
-// Main JS: small helpers used across visualizers
 document.addEventListener('DOMContentLoaded', () => {
-  // simple focus or minor interactive features can be added here
-  // e.g., attach tooltip container
   if (!document.getElementById('algosphere-tooltip')){
     const t = document.createElement('div');
     t.id = 'algosphere-tooltip';
